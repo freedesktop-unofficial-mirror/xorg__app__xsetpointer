@@ -27,6 +27,5 @@ xsetpointer_LDADD = $(DEP_LIBS)
 xsetpointer_SOURCES =	\
         xsetpointer.c
 
-dist_man_MANS = \
-        xsetpnt.man
-
+dist_man1_MANS = \
+        xsetpointer.man
