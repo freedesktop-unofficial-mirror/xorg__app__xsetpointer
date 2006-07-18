@@ -59,19 +59,27 @@ StrCaseCmp(char *s1, char *s2)
 int
 main(int argc, char * argv[])
 {
-  int           loop, num_extensions, num_devices;
-  char          **extensions;
-  XDeviceInfo   *devices;
-  Display       *dpy;
-  int		list = 0;
+  int                loop, num_extensions, num_devices;
+  char               **extensions;
+  XDeviceInfo        *devices;
+  XDeviceCoreControl corectl;
+  Display            *dpy;
+  int		     list = 0, core = 0;
+  XDevice            *device;
   
-  if (argc != 2) {
-    fprintf(stderr, "usage : %s (-l | <device name>)\n", argv[0]);
+  if (argc < 2 || argc > 3) {
+    fprintf(stderr, "usage : %s (-l | -c | +c ) <device name>)\n", argv[0]);
     exit(1);
   }
 
   if (strcmp(argv[1], "-l") == 0) {
     list = 1;
+  }
+  else if (strcmp(argv[1], "-c") == 0) {
+    core = 1;
+  }
+  else if (strcmp(argv[1], "+c") == 0) {
+    core = 2;
   }
   
   dpy = XOpenDisplay(NULL);
@@ -117,13 +125,31 @@ main(int argc, char * argv[])
 		  break;
 	      }
 	  }
+          else if (core) {
+            if (argc == 3 && devices[loop].name &&
+                StrCaseCmp(devices[loop].name, argv[2]) == 0) {
+#ifdef DEBUG
+                fprintf(stderr, "opening device %s\n",
+                        devices[loop].name ? devices[loop].name : "<noname>");
+#endif
+              device = XOpenDevice(dpy, devices[loop].id);
+              if (device) {
+                corectl.status = (core - 1);
+                XChangeDeviceControl(dpy, device, DEVICE_CORE,
+                                     (XDeviceControl *)&corectl);
+                exit(0);
+              }
+              else {
+                fprintf(stderr, "error opening device\n");
+                exit(1);
+              }
+            }
+          }
 	  else {
           if ((argc == 2) && devices[loop].name &&
               (StrCaseCmp(devices[loop].name, argv[1]) == 0))
             if (devices[loop].use == IsXExtensionDevice)
               {
-                XDevice *device;
-              
 #ifdef DEBUG
                 fprintf(stderr, "opening device %s\n",
                         devices[loop].name ? devices[loop].name : "<noname>");
@@ -150,7 +176,7 @@ main(int argc, char * argv[])
       exit(1);
     }
   
-  if (list) {
+  if (list || core) {
     exit(0);
   }
   else {
