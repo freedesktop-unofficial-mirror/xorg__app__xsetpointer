@@ -106,6 +106,12 @@ main(int argc, char * argv[])
 	      case IsXExtensionDevice:
 		  printf("XExtensionDevice]\n");
 		  break;
+              case IsXExtensionKeyboard:
+                  printf("XExtensionKeyboard]\n");
+                  break;
+              case IsXExtensionPointer:
+                  printf("XExtensionPointer]\n");
+                  break;
 	      default:
 		  printf("invalid value]\n");
 		  break;
