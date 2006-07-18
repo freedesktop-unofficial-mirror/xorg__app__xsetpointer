@@ -34,8 +34,15 @@ appmandir = $(APP_MAN_DIR)
 
 appman_DATA = $(appman_PRE:man=@APP_MAN_SUFFIX@)
 
-EXTRA_DIST = $(appman_PRE)
-CLEANFILES = $(appman_DATA)
+EXTRA_DIST = $(appman_PRE) ChangeLog
+CLEANFILES = $(appman_DATA) ChangeLog
+
+.PHONY: ChangeLog
+
+ChangeLog:
+	GIT_DIR=${srcdir}.git git-log > ChangeLog
+
+dist-hook: ChangeLog
 
 SED = sed
 
