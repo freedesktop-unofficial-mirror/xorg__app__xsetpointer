@@ -40,7 +40,7 @@ CLEANFILES = $(appman_DATA) ChangeLog
 .PHONY: ChangeLog
 
 ChangeLog:
-	GIT_DIR=${srcdir}.git git-log > ChangeLog
+	GIT_DIR=$(srcdir)/.git git-log > ChangeLog
 
 dist-hook: ChangeLog
 
