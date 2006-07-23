@@ -129,12 +129,16 @@ main(int argc, char * argv[])
             if (argc == 3 && devices[loop].name &&
                 StrCaseCmp(devices[loop].name, argv[2]) == 0) {
 #ifdef DEBUG
-                fprintf(stderr, "opening device %s\n",
-                        devices[loop].name ? devices[loop].name : "<noname>");
+                fprintf(stderr, "opening device %s at %d\n",
+                        devices[loop].name ? devices[loop].name : "<noname>",
+                        devices[loop].id);
 #endif
               device = XOpenDevice(dpy, devices[loop].id);
               if (device) {
+                fprintf(stderr, "device successfully opened\n");
                 corectl.status = (core - 1);
+                corectl.length = sizeof(int);
+                corectl.control = DEVICE_CORE;
                 XChangeDeviceControl(dpy, device, DEVICE_CORE,
                                      (XDeviceControl *)&corectl);
                 exit(0);
