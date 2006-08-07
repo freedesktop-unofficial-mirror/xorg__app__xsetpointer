@@ -135,9 +135,8 @@ main(int argc, char * argv[])
 #endif
               device = XOpenDevice(dpy, devices[loop].id);
               if (device) {
-                fprintf(stderr, "device successfully opened\n");
                 corectl.status = (core - 1);
-                corectl.length = sizeof(int);
+                corectl.length = sizeof(corectl);
                 corectl.control = DEVICE_CORE;
                 XChangeDeviceControl(dpy, device, DEVICE_CORE,
                                      (XDeviceControl *)&corectl);
@@ -180,11 +179,12 @@ main(int argc, char * argv[])
       exit(1);
     }
   
-  if (list || core) {
+  if (list) {
     exit(0);
   }
   else {
-    fprintf(stderr, "Extended device %s not found\n", argv[1]);
+    fprintf(stderr, "Extended device %s not found\n", core ? argv[2] :
+                                                             argv[1]);
     exit(1);
   }
 }
