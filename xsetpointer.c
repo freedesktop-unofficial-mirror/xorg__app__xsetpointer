@@ -59,13 +59,13 @@ StrCaseCmp(char *s1, char *s2)
 int
 main(int argc, char * argv[])
 {
-  int                loop, num_extensions, num_devices;
-  char               **extensions;
+  int                loop, num_devices;
   XDeviceInfo        *devices;
   XDeviceCoreControl corectl;
   Display            *dpy;
   int		     list = 0, core = 0;
   XDevice            *device;
+  int                major, evt, err; /* event version, etc */
   
   if (argc < 2 || argc > 3) {
     fprintf(stderr, "usage : %s (-l | -c | +c ) <device name>)\n", argv[0]);
@@ -81,7 +81,7 @@ main(int argc, char * argv[])
   else if (strcmp(argv[1], "+c") == 0) {
     core = 2;
   }
-  
+
   dpy = XOpenDisplay(NULL);
 
   if (!dpy) {
@@ -93,96 +93,102 @@ main(int argc, char * argv[])
   printf("connected to %s\n", XDisplayString(dpy));
 #endif
 
-  extensions = XListExtensions(dpy, &num_extensions);
-  for (loop = 0; loop < num_extensions &&
-         (strcmp(extensions[loop], "XInputExtension") != 0); loop++);
-  XFreeExtensionList(extensions);
-  if (loop != num_extensions)
+  if (!XQueryExtension(dpy, INAME, &major, &evt, &err))
+  {
+      fprintf(stderr, "No XInput extension available\n");
+      return 1;
+  } else {
+      XExtensionVersion *version;
+      version = XGetExtensionVersion(dpy, INAME);
+      if (version->major_version >= XI_Add_DevicePresenceNotify_Major &&
+          version->minor_version >= XI_Add_DevicePresenceNotify_Minor)
+      {
+          fprintf(stderr, "Sorry. %s is deprecated for the X Server version "
+                  "you are connecting to.\n", argv[0]);
+          XFree(version);
+          return 1;
+      }
+      XFree(version);
+  }
+
+    devices = XListInputDevices(dpy, &num_devices);
+    for(loop=0; loop<num_devices; loop++)
     {
-      devices = XListInputDevices(dpy, &num_devices);
-      for(loop=0; loop<num_devices; loop++)
-        {
-	  if (list) {
-	      printf("%d: \"%s\"	[", devices[loop].id, devices[loop].name ? devices[loop].name : "<noname>");
-	      switch(devices[loop].use) {
-	      case IsXPointer:
-		  printf("XPointer]\n");
-		  break;
-	      case IsXKeyboard:
-		  printf("XKeyboard]\n");
-		  break;
-	      case IsXExtensionDevice:
-		  printf("XExtensionDevice]\n");
-		  break;
-              case IsXExtensionKeyboard:
-                  printf("XExtensionKeyboard]\n");
-                  break;
-              case IsXExtensionPointer:
-                  printf("XExtensionPointer]\n");
-                  break;
-	      default:
-		  printf("invalid value]\n");
-		  break;
-	      }
-	  }
-          else if (core) {
+        if (list) {
+            printf("%d: \"%s\"	[", devices[loop].id, devices[loop].name ? devices[loop].name : "<noname>");
+            switch(devices[loop].use) {
+                case IsXPointer:
+                    printf("XPointer]\n");
+                    break;
+                case IsXKeyboard:
+                    printf("XKeyboard]\n");
+                    break;
+                case IsXExtensionDevice:
+                    printf("XExtensionDevice]\n");
+                    break;
+                case IsXExtensionKeyboard:
+                    printf("XExtensionKeyboard]\n");
+                    break;
+                case IsXExtensionPointer:
+                    printf("XExtensionPointer]\n");
+                    break;
+                default:
+                    printf("invalid value]\n");
+                    break;
+            }
+        }
+        else if (core) {
             if (argc == 3 && devices[loop].name &&
-                StrCaseCmp(devices[loop].name, argv[2]) == 0) {
+                    StrCaseCmp(devices[loop].name, argv[2]) == 0) {
 #ifdef DEBUG
                 fprintf(stderr, "opening device %s at %d\n",
                         devices[loop].name ? devices[loop].name : "<noname>",
                         devices[loop].id);
 #endif
-              device = XOpenDevice(dpy, devices[loop].id);
-              if (device) {
-                corectl.status = (core - 1);
-                corectl.length = sizeof(corectl);
-                corectl.control = DEVICE_CORE;
-                XChangeDeviceControl(dpy, device, DEVICE_CORE,
-                                     (XDeviceControl *)&corectl);
-                exit(0);
-              }
-              else {
-                fprintf(stderr, "error opening device\n");
-                exit(1);
-              }
-            }
-          }
-	  else {
-          if ((argc == 2) && devices[loop].name &&
-              (StrCaseCmp(devices[loop].name, argv[1]) == 0))
-            if (devices[loop].use == IsXExtensionDevice)
-              {
-#ifdef DEBUG
-                fprintf(stderr, "opening device %s\n",
-                        devices[loop].name ? devices[loop].name : "<noname>");
-#endif
                 device = XOpenDevice(dpy, devices[loop].id);
-                if (device)
-                  {
-                    XChangePointerDevice(dpy, device, 0, 1);
+                if (device) {
+                    corectl.status = (core - 1);
+                    corectl.length = sizeof(corectl);
+                    corectl.control = DEVICE_CORE;
+                    XChangeDeviceControl(dpy, device, DEVICE_CORE,
+                            (XDeviceControl *)&corectl);
                     exit(0);
-                  }
-                else
-                  {
+                }
+                else {
                     fprintf(stderr, "error opening device\n");
                     exit(1);
-                  }
-              }
-	  }
+                }
+            }
         }
-      XFreeDeviceList(devices);
+        else {
+            if ((argc == 2) && devices[loop].name &&
+                    (StrCaseCmp(devices[loop].name, argv[1]) == 0))
+                if (devices[loop].use == IsXExtensionDevice)
+                {
+#ifdef DEBUG
+                    fprintf(stderr, "opening device %s\n",
+                            devices[loop].name ? devices[loop].name : "<noname>");
+#endif
+                    device = XOpenDevice(dpy, devices[loop].id);
+                    if (device)
+                    {
+                        XChangePointerDevice(dpy, device, 0, 1);
+                        exit(0);
+                    }
+                    else
+                    {
+                        fprintf(stderr, "error opening device\n");
+                        exit(1);
+                    }
+                }
+        }
     }
-  else
-    {
-      fprintf(stderr, "No XInput extension available\n");
-      exit(1);
+    XFreeDeviceList(devices);
+
+    if (list) {
+        exit(0);
     }
-  
-  if (list) {
-    exit(0);
-  }
-  else {
+    else {
     fprintf(stderr, "Extended device %s not found\n", core ? argv[2] :
                                                              argv[1]);
     exit(1);
