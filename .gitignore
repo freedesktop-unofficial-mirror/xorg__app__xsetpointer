@@ -18,3 +18,7 @@ stamp-h1
 xsetpointer
 xsetpointer.1
 *~
+*.o
+xsetpointer-*.tar.*
+ChangeLog
+tags

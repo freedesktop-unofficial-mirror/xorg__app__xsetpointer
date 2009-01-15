@@ -30,8 +30,6 @@
 #include <X11/Xproto.h>
 #include <X11/extensions/XInput.h>
 
-int           event_type;
-
 static int 
 StrCaseCmp(char *s1, char *s2)
 {
@@ -115,7 +113,7 @@ main(int argc, char * argv[])
     for(loop=0; loop<num_devices; loop++)
     {
         if (list) {
-            printf("%d: \"%s\"	[", devices[loop].id, devices[loop].name ? devices[loop].name : "<noname>");
+            printf("%d: \"%s\"	[", (int)devices[loop].id, devices[loop].name ? devices[loop].name : "<noname>");
             switch(devices[loop].use) {
                 case IsXPointer:
                     printf("XPointer]\n");
