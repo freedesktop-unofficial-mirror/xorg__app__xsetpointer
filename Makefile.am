@@ -21,7 +21,7 @@
 
 bin_PROGRAMS = xsetpointer
 
-xsetpointer_CFLAGS = $(XSETPOINTER_CFLAGS)
+AM_CFLAGS = $(CWARNFLAGS) $(XSETPOINTER_CFLAGS)
 xsetpointer_LDADD = $(XSETPOINTER_LIBS)
 
 xsetpointer_SOURCES =	\
@@ -66,4 +66,4 @@ MAN_SUBSTS = \
 SUFFIXES = .$(APP_MAN_SUFFIX) .man
 
 .man.$(APP_MAN_SUFFIX):
-	sed $(MAN_SUBSTS) < $< > $@
+	$(AM_V_GEN)$(SED) $(MAN_SUBSTS) < $< > $@
