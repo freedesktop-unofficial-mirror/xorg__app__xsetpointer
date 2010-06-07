@@ -23,12 +23,18 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <X11/Xproto.h>
 #include <X11/extensions/XInput.h>
+
+#ifndef HAVE_STRCASECMP
+#include <ctype.h>
 
 static int 
 StrCaseCmp(char *s1, char *s2)
@@ -53,6 +59,9 @@ StrCaseCmp(char *s1, char *s2)
 	}
 	return(c1 - c2);
 }
+
+#define strcasecmp StrCaseCmp
+#endif
 
 int
 main(int argc, char * argv[])
@@ -137,7 +146,7 @@ main(int argc, char * argv[])
         }
         else if (core) {
             if (argc == 3 && devices[loop].name &&
-                    StrCaseCmp(devices[loop].name, argv[2]) == 0) {
+                    strcasecmp(devices[loop].name, argv[2]) == 0) {
 #ifdef DEBUG
                 fprintf(stderr, "opening device %s at %d\n",
                         devices[loop].name ? devices[loop].name : "<noname>",
@@ -160,7 +169,7 @@ main(int argc, char * argv[])
         }
         else {
             if ((argc == 2) && devices[loop].name &&
-                    (StrCaseCmp(devices[loop].name, argv[1]) == 0))
+                    (strcasecmp(devices[loop].name, argv[1]) == 0))
                 if (devices[loop].use == IsXExtensionDevice)
                 {
 #ifdef DEBUG
