@@ -40,7 +40,6 @@ AC_CHECK_FUNCS([strcasecmp])
 
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XSETPOINTER, xi x11 [inputproto >= 1.4])
-AC_SUBST(XSETPOINTER_CFLAGS)
 AC_SUBST(XSETPOINTER_LIBS)
 
 AC_OUTPUT([Makefile])
