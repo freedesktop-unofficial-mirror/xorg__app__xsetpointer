@@ -41,4 +41,7 @@ AC_CHECK_FUNCS([strcasecmp])
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XSETPOINTER, xi x11 [inputproto >= 1.4])
 
-AC_OUTPUT([Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	man/Makefile])
+AC_OUTPUT
