@@ -75,7 +75,7 @@ main(int argc, char * argv[])
   int                major, evt, err; /* event version, etc */
   
   if (argc < 2 || argc > 3) {
-    fprintf(stderr, "usage : %s (-l | -c | +c ) <device name>)\n", argv[0]);
+    fprintf(stderr, "usage : %s (-l | -c | +c ) <device name>\n", argv[0]);
     exit(1);
   }
 
