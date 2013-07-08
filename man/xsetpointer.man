@@ -5,13 +5,31 @@
 .SH NAME
 xsetpointer \- set an X Input device as the main pointer
 .SH SYNOPSIS
-.B xsetpointer \-l
-|
+.PP
+.B xsetpointer
+\-l
+.PP
+.B xsetpointer
+\-c
+.I device-name
+.PP
+.B xsetpointer
+\+c
 .I device-name
 .SH DESCRIPTION
-Xsetpointer sets an XInput device as the main pointer.  When called with
-the \-l flag it lists the available devices.  When called with the -c/+c
-flag, it toggles the sending of core input events, for servers which
-implement a virtual core pointer; -c disables core events, and +c enables.
+.B Xsetpointer
+sets an XInput device as the main pointer.
+.SH OPTIONS
+.TP 8
+.B "-l"
+Lists the available devices.
+.TP 8
+.BI "-c" " device-name"
+Toggles the sending of core input events, for servers which implement a
+virtual core pointer; disables core events.
+.TP 8
+.BI "+c" " device-name"
+Toggles the sending of core input events, for servers which implement a
+virtual core pointer; enables core events.
 .SH AUTHOR
 Frederic Lepied

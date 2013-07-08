@@ -75,7 +75,11 @@ main(int argc, char * argv[])
   int                major, evt, err; /* event version, etc */
   
   if (argc < 2 || argc > 3) {
-    fprintf(stderr, "usage : %s (-l | -c | +c ) <device name>\n", argv[0]);
+    fprintf(stderr, "Usage: %s -l | -c <device name> | +c <device name>\n", argv[0]);
+    fprintf(stderr, "Options:\n");
+    fprintf(stderr, "  -l                Lists the available devices\n");
+    fprintf(stderr, "  -c <device name>  Disables core events\n");
+    fprintf(stderr, "  +c <device name>  Enables core events\n");
     exit(1);
   }
 
