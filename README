@@ -1,25 +1,16 @@
-xsetpointer - set an X Input device as the main pointer
+*************** THIS PROGRAM IS NO LONGER MAINTAINED BY X.ORG ***************
+
+xsetpointer sets an input device as the core pointer. This dates back to
+when an extension device could not be a core device at the same time and
+is obsolete since server 1.4 (released September 2007).
+The request always fails now (96e32805d12fc36f0fa0926dbfb0dd8a5cadb739).
+
+xinput set-pointer is the equivalent of xsetpointer, but still doesn't
+do anything, this app is truly dead.
+
+*****************************************************************************
 
 All questions regarding this software should be directed at the
 Xorg mailing list:
 
         http://lists.freedesktop.org/mailman/listinfo/xorg
-
-Please submit bug reports to the Xorg bugzilla:
-
-        https://bugs.freedesktop.org/enter_bug.cgi?product=xorg
-
-The master development code repository can be found at:
-
-        git://anongit.freedesktop.org/git/xorg/app/xsetpointer
-
-        http://cgit.freedesktop.org/xorg/app/xsetpointer
-
-For patch submission instructions, see:
-
-	http://www.x.org/wiki/Development/Documentation/SubmittingPatches
-
-For more information on the git code manager, see:
-
-        http://wiki.x.org/wiki/GitPage
-
